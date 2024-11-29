@@ -1,99 +1,182 @@
 #include <stdio.h>
+#include <string.h>
+
+#define MAX_CONTAS 100
+#define MAX_PAGADORES 100
 
 typedef struct {
-    int id;
-    char nome[50];
-    float saldo;
-} Pagador;
-
-typedef struct {
-    int pagadorId;
-    float valor;
+    int idConta;         // Identificador único da conta
+    float valor;         // Valor associado à conta
+    char status[20];     // Status (ex.: "Pago", "Pendente")
+    char vencimento[10]; // Data de vencimento (ex.: "YYYY-MM-DD")
+    int idpagador;       // ID do pagador associado
 } Conta;
 
-void listarPagadores(Pagador *pagadores, int *ultimoPagadorId) {
-    printf("-------- Listar Pagadores --------\n\n");
+typedef struct {
+    int id;             // Identificador único do pagador
+    char nome[50];      // Nome do pagador
+    char cpfCnpj[20];   // CPF ou CNPJ do pagador
+    char telefone[15];  // Telefone de contato
+} Pagador;
 
-    for (int c=0; c<=*ultimoPagadorId; c++) {
-        printf("%d. %s | Saldo: %.2f;\n", c+1, pagadores[c].nome, pagadores[c].saldo);
+// Função para exibir o menu principal
+void menu() {
+    printf("\nGerenciamento de Contas e Pagadores\n");
+    printf("1. Cadastrar Pagador\n");
+    printf("2. Cadastrar Conta\n");
+    printf("3. Listar Pagadores\n");
+    printf("4. Listar Contas\n");
+    printf("5. Sair\n");
+    printf("Escolha uma opção: ");
+}
+
+// Função para verificar se um ID de pagador já existe
+int verificar_pagador_existente(Pagador *pagadores, int num_pagadores, int id) {
+    for (int i = 0; i < num_pagadores; i++) {
+        if (pagadores[i].id == id) {
+            return 1; // Pagador encontrado
+        }
+    }
+    return 0; // Pagador não encontrado
+}
+
+// Função para verificar se um ID de conta já existe
+int verificar_conta_existente(Conta *contas, int num_contas, int idConta) {
+    for (int i = 0; i < num_contas; i++) {
+        if (contas[i].idConta == idConta) {
+            return 1; // Conta encontrada
+        }
+    }
+    return 0; // Conta não encontrada
+}
+
+// Função para cadastrar um novo pagador
+void cadastrar_pagador(Pagador *pagadores, int *num_pagadores) {
+    if (*num_pagadores >= MAX_PAGADORES) {
+        printf("Limite máximo de pagadores atingido!\n");
+        return;
     }
 
-    printf("\n");
-}
+    Pagador novoPagador;
+    printf("Digite o ID do pagador: ");
+    scanf("%d", &novoPagador.id);
 
-void listarContas(Pagador *pagadores, Conta *contas, int *ultimaContaIndice) {
-    printf("-------- Listar Contas --------\n\n");
-
-    if (*ultimaContaIndice==-1) {
-        printf("Sem contas a exibir.\n");
+    if (verificar_pagador_existente(pagadores, *num_pagadores, novoPagador.id)) {
+        printf("Erro: Já existe um pagador com esse ID.\n");
+        return;
     }
 
-    for (int c=0; c<=*ultimaContaIndice; c++) {
-        printf("%d Conta - Pagador: %s | Valor: %.2f;\n", c+1, pagadores[contas[c].pagadorId].nome, contas[c].valor);
+    printf("Digite o nome do pagador: ");
+    scanf(" %[^\n]", novoPagador.nome);
+    printf("Digite o CPF/CNPJ do pagador: ");
+    scanf("%s", novoPagador.cpfCnpj);
+    printf("Digite o telefone do pagador: ");
+    scanf("%s", novoPagador.telefone);
+
+    pagadores[*num_pagadores] = novoPagador;
+    (*num_pagadores)++;
+    printf("Pagador cadastrado com sucesso!\n");
+}
+
+// Função para cadastrar uma nova conta
+void cadastrar_conta(Conta *contas, int *num_contas, Pagador *pagadores, int num_pagadores) {
+    if (*num_contas >= MAX_CONTAS) {
+        printf("Limite máximo de contas atingido!\n");
+        return;
     }
 
-    printf("\n");
+    Conta novaConta;
+    printf("Digite o ID da conta: ");
+    scanf("%d", &novaConta.idConta);
+
+    if (verificar_conta_existente(contas, *num_contas, novaConta.idConta)) {
+        printf("Erro: Já existe uma conta com esse ID.\n");
+        return;
+    }
+
+    printf("Digite o valor da conta: ");
+    scanf("%f", &novaConta.valor);
+    printf("Digite o status da conta (Pago/Pendente): ");
+    scanf("%s", novaConta.status);
+    printf("Digite a data de vencimento (YYYY-MM-DD): ");
+    scanf("%s", novaConta.vencimento);
+    printf("Digite o ID do pagador associado: ");
+    scanf("%d", &novaConta.idpagador);
+
+    if (!verificar_pagador_existente(pagadores, num_pagadores, novaConta.idpagador)) {
+        printf("Erro: Pagador com ID %d não encontrado.\n", novaConta.idpagador);
+        return;
+    }
+
+    contas[*num_contas] = novaConta;
+    (*num_contas)++;
+    printf("Conta cadastrada com sucesso!\n");
 }
 
-void criarPagador(Pagador *pagadores, int *ultimoPagadorId) {
-    printf("-------- Criar Pagador --------\n\n");
-
-    // implementar esta função
-
-    *ultimoPagadorId++;
-
-    printf("\n");
-}
-
-void criarConta(Pagador *pagadores, Conta *contas, int *ultimaContaIndice) {
-    printf("-------- Criar Conta --------\n\n");
-
-    // implementar esta função. Não esquecer de anexar o id do pagador a conta (no campo pagadorId) e subtrair do saldo do pagador o valor da conta
-
-    *ultimaContaIndice++;
-
-    printf("\n");
-}
-
-void exibirMenu() {
-    printf("1. Listar Pagadores;\n2. Listar Contas;\n3. Criar Novo Pagador;\n4. Criar nova conta;\n5. Sair;\n");
-}
-
-void executarTarefaEscolhida(int escolha, Pagador *pagadores, Conta *contas, int *ultimoPagadorId, int *ultimaContaIndice) {
-    switch (escolha) {
-        case 1:
-            listarPagadores(pagadores, ultimoPagadorId);
-            break;
-        case 2:
-            listarContas(pagadores, contas, ultimaContaIndice);
-            break;
-        case 3:
-            criarPagador(pagadores, ultimoPagadorId);
-            break;
-        case 4:
-            criarConta(pagadores, contas, ultimaContaIndice);
-            break;
+// Função para listar todos os pagadores
+void listar_pagadores(Pagador *pagadores, int num_pagadores) {
+    printf("\nPagadores cadastrados:\n");
+    for (int i = 0; i < num_pagadores; i++) {
+        printf("ID: %d | Nome: %s | CPF/CNPJ: %s | Telefone: %s\n",
+               pagadores[i].id, pagadores[i].nome, pagadores[i].cpfCnpj, pagadores[i].telefone);
     }
 }
 
-int main(void) {
-    Pagador pagadores[10] = {{0, "Rafael Medeiros", 1332}, {1, "Matheus Cavalheiro", 1332}};
-    Conta contas[30] = {};
+// Função para listar todas as contas
+void listar_contas(Conta *contas, int num_contas, Pagador *pagadores, int num_pagadores) {
+    printf("\nContas cadastradas:\n");
+    for (int i = 0; i < num_contas; i++) {
+        // Encontra o nome do pagador associado
+        char nomePagador[50] = "Desconhecido";
+        for (int j = 0; j < num_pagadores; j++) {
+            if (pagadores[j].id == contas[i].idpagador) {
+                strcpy(nomePagador, pagadores[j].nome);
+                break;
+            }
+        }
 
-    int ultimoPagadorId = 1;        // mantem armazenado qual o id do ultimo pagador. Serve para iterar sobre a struct pagadores mais facilmente
-    int ultimaContaIndice = -1;     // mantem armazenado qual o indice baseado em zero da ultima conta, serve para iterar sobre a struct. É -1 pois não há contas
+        printf("ID Conta: %d | Valor: %.2f | Status: %s | Vencimento: %s | Pagador: %s (ID: %d)\n",
+               contas[i].idConta, contas[i].valor, contas[i].status, contas[i].vencimento,
+               nomePagador, contas[i].idpagador);
+    }
+}
 
-    int escolha = 0;
+int main() {
+    Conta contas[MAX_CONTAS];
+    Pagador pagadores[MAX_PAGADORES];
+    int num_contas = 0;
+    int num_pagadores = 0;
 
+    int opcao;
     do {
-        printf("\n");
-        exibirMenu();       // exibe menú de opções
-        printf("Escolha a opcao: ");
-        scanf("%d", &escolha);
-        printf("\n");
+        menu();
+        scanf("%d", &opcao);
 
-        executarTarefaEscolhida(escolha, pagadores, contas, &ultimoPagadorId, &ultimaContaIndice);      // executa a função associada a escolha feita pelo usuário
-    } while (escolha != 5);
+        switch (opcao) {
+            case 1:
+                cadastrar_pagador(pagadores, &num_pagadores);
+                break;
+
+            case 2:
+                cadastrar_conta(contas, &num_contas, pagadores, num_pagadores);
+                break;
+
+            case 3:
+                listar_pagadores(pagadores, num_pagadores);
+                break;
+
+            case 4:
+                listar_contas(contas, num_contas, pagadores, num_pagadores);
+                break;
+
+            case 5:
+                printf("Saindo do programa...\n");
+                break;
+
+            default:
+                printf("Opção inválida! Tente novamente.\n");
+        }
+    } while (opcao != 5);
 
     return 0;
 }
