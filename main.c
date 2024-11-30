@@ -1,3 +1,33 @@
+/*
+Disciplina: Linguagem de Programação C
+
+Integrantes:
+- João Victor Martinho
+- Matheus Cavalheiro De Camargo 
+- Pedro Henrique Nunes Oliveira
+- Pedro Guaita Pereira
+- Rafael Ribeiro
+
+Descrição do Problema:
+O objetivo deste programa é gerenciar informações de contas e pagadores para uma empresa.
+Ele permite o cadastro, listagem, busca de contas e pagadores, além de associar contas
+a seus respectivos pagadores. O sistema utiliza vetores, structs e inclui operações com 
+persistência de dados em memória.
+
+Descrição do Funcionamento do Algoritmo:
+O algoritmo apresenta um menu principal com as seguintes funcionalidades:
+1. Cadastro de novos pagadores e contas.
+2. Listagem completa de pagadores e contas, incluindo a associação entre eles.
+3. Busca de pagadores ou contas pelo ID, exibindo informações detalhadas.
+4. Salvar os dados de pagadores e contas em arquivos para garantir persistência.
+5. Carregar os dados de pagadores e contas ao iniciar o programa, mantendo as informações 
+   entre execuções.
+
+O programa utiliza estruturas de dados `struct` para armazenar informações e verifica relações
+de integridade entre contas e pagadores. Após cada operação, o menu é exibido novamente até 
+que o usuário escolha a opção de sair.
+*/
+
 #include <stdio.h>
 #include <string.h>
 
