@@ -26,7 +26,9 @@ void menu() {
     printf("2. Cadastrar Conta\n");
     printf("3. Listar Pagadores\n");
     printf("4. Listar Contas\n");
-    printf("5. Sair\n");
+    printf("5. Buscar Pagador por ID\n");
+    printf("6. Buscar Conta por ID\n");
+    printf("7. Sair\n");
     printf("Escolha uma opção: ");
 }
 
@@ -141,6 +143,52 @@ void listar_contas(Conta *contas, int num_contas, Pagador *pagadores, int num_pa
     }
 }
 
+// Função para buscar um pagador pelo ID
+void buscar_pagador_por_id(Pagador *pagadores, int num_pagadores) {
+    int idBusca;
+    printf("Digite o ID do pagador que deseja buscar: ");
+    scanf("%d", &idBusca);
+
+    for (int i = 0; i < num_pagadores; i++) {
+        if (pagadores[i].id == idBusca) {
+            printf("\nPagador encontrado!\n");
+            printf("ID: %d | Nome: %s | CPF/CNPJ: %s | Telefone: %s\n",
+                   pagadores[i].id, pagadores[i].nome, pagadores[i].cpfCnpj, pagadores[i].telefone);
+            return;
+        }
+    }
+
+    printf("\nErro: Nenhum pagador encontrado com o ID %d.\n", idBusca);
+}
+
+// Função para buscar uma conta pelo ID
+void buscar_conta_por_id(Conta *contas, int num_contas, Pagador *pagadores, int num_pagadores) {
+    int idBusca;
+    printf("Digite o ID da conta que deseja buscar: ");
+    scanf("%d", &idBusca);
+
+    for (int i = 0; i < num_contas; i++) {
+        if (contas[i].idConta == idBusca) {
+            // Encontra o nome do pagador associado
+            char nomePagador[50] = "Desconhecido";
+            for (int j = 0; j < num_pagadores; j++) {
+                if (pagadores[j].id == contas[i].idpagador) {
+                    strcpy(nomePagador, pagadores[j].nome);
+                    break;
+                }
+            }
+
+            printf("\nConta encontrada!\n");
+            printf("ID Conta: %d | Valor: %.2f | Status: %s | Vencimento: %s | Pagador: %s (ID: %d)\n",
+                   contas[i].idConta, contas[i].valor, contas[i].status, contas[i].vencimento,
+                   nomePagador, contas[i].idpagador);
+            return;
+        }
+    }
+
+    printf("\nErro: Nenhuma conta encontrada com o ID %d.\n", idBusca);
+}
+
 int main() {
     Conta contas[MAX_CONTAS];
     Pagador pagadores[MAX_PAGADORES];
@@ -170,13 +218,21 @@ int main() {
                 break;
 
             case 5:
+                buscar_pagador_por_id(pagadores, num_pagadores);
+                break;
+
+            case 6:
+                buscar_conta_por_id(contas, num_contas, pagadores, num_pagadores);
+                break;
+
+            case 7:
                 printf("Saindo do programa...\n");
                 break;
 
             default:
                 printf("Opção inválida! Tente novamente.\n");
         }
-    } while (opcao != 5);
+    } while (opcao != 7);
 
     return 0;
 }
