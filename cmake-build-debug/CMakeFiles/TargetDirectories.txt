@@ -1,3 +1,0 @@
-C:/Users/corta/CLionProjects/trabalho-final-lp/cmake-build-debug/CMakeFiles/trabalho_final_lp.dir
-C:/Users/corta/CLionProjects/trabalho-final-lp/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/corta/CLionProjects/trabalho-final-lp/cmake-build-debug/CMakeFiles/rebuild_cache.dir
