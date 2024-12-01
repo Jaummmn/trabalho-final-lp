@@ -173,6 +173,39 @@ void salvar_dados(Pagador *pagadores, int num_pagadores, Conta *contas, int num_
     printf("Dados salvos com sucesso!\n");
 }
 
+void carregar_dados(Pagador *pagadores, int *num_pagadores, Conta *contas, int *num_contas) {
+    FILE *arquivo_pagadores = fopen("pagadores.txt", "r");
+    FILE *arquivo_contas = fopen("contas.txt", "r");
+
+    if (arquivo_pagadores != NULL) {
+        *num_pagadores = 0;
+        while (fscanf(arquivo_pagadores, "%d|%49[^|]|%19[^|]|%14[^\n]\n",
+                      &pagadores[*num_pagadores].id,
+                      pagadores[*num_pagadores].nome,
+                      pagadores[*num_pagadores].cpfCnpj,
+                      pagadores[*num_pagadores].telefone) == 4) {
+            (*num_pagadores)++;
+        }
+        fclose(arquivo_pagadores);
+    } else {
+        printf("Aviso: Nenhum arquivo de pagadores encontrado.\n");
+    }
+
+    if (arquivo_contas != NULL) {
+        *num_contas = 0;
+        while (fscanf(arquivo_contas, "%d|%f|%19[^|]|%9[^|]|%d\n",
+                      &contas[*num_contas].idConta,
+                      &contas[*num_contas].valor,
+                      contas[*num_contas].status,
+                      contas[*num_contas].vencimento,
+                      &contas[*num_contas].idpagador) == 5) {
+            (*num_contas)++;
+        }
+        fclose(arquivo_contas);
+    } else {
+        printf("Aviso: Nenhum arquivo de contas encontrado.\n");
+    }
+}
 
 // Função para listar todos os pagadores
 void listar_pagadores(Pagador *pagadores, int num_pagadores) {
@@ -254,6 +287,9 @@ int main() {
     int num_contas = 0;
     int num_pagadores = 0;
 
+    // Carregar dados dos arquivos ao iniciar
+    carregar_dados(pagadores, &num_pagadores, contas, &num_contas);
+    
     int opcao;
     do {
         menu();
