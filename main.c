@@ -145,6 +145,35 @@ void cadastrar_conta(Conta *contas, int *num_contas, Pagador *pagadores, int num
     printf("Conta cadastrada com sucesso!\n");
 }
 
+void salvar_dados(Pagador *pagadores, int num_pagadores, Conta *contas, int num_contas) {
+    FILE *arquivo_pagadores = fopen("pagadores.txt", "w");
+    FILE *arquivo_contas = fopen("contas.txt", "w");
+
+    if (arquivo_pagadores == NULL || arquivo_contas == NULL) {
+        printf("Erro ao abrir os arquivos para salvar os dados!\n");
+        return;
+    }
+
+    // Salvar pagadores
+    for (int i = 0; i < num_pagadores; i++) {
+        fprintf(arquivo_pagadores, "%d|%s|%s|%s\n",
+                pagadores[i].id, pagadores[i].nome, pagadores[i].cpfCnpj, pagadores[i].telefone);
+    }
+
+    // Salvar contas
+    for (int i = 0; i < num_contas; i++) {
+        fprintf(arquivo_contas, "%d|%.2f|%s|%s|%d\n",
+                contas[i].idConta, contas[i].valor, contas[i].status,
+                contas[i].vencimento, contas[i].idpagador);
+    }
+
+    fclose(arquivo_pagadores);
+    fclose(arquivo_contas);
+
+    printf("Dados salvos com sucesso!\n");
+}
+
+
 // Função para listar todos os pagadores
 void listar_pagadores(Pagador *pagadores, int num_pagadores) {
     printf("\nPagadores cadastrados:\n");
@@ -257,6 +286,8 @@ int main() {
 
             case 7:
                 printf("Saindo do programa...\n");
+                // Salvar os dados ao sair
+                salvar_dados(pagadores, num_pagadores, contas, num_contas);
                 break;
 
             default:
