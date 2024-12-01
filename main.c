@@ -156,13 +156,13 @@ void salvar_dados(Pagador *pagadores, int num_pagadores, Conta *contas, int num_
 
     // Salvar pagadores
     for (int i = 0; i < num_pagadores; i++) {
-        fprintf(arquivo_pagadores, "%d|%s|%s|%s\n",
+        fprintf(arquivo_pagadores, "ID: %d|Nome:%s|CPF/CNJP: %s|TEL: %s\n",
                 pagadores[i].id, pagadores[i].nome, pagadores[i].cpfCnpj, pagadores[i].telefone);
     }
 
     // Salvar contas
     for (int i = 0; i < num_contas; i++) {
-        fprintf(arquivo_contas, "%d|%.2f|%s|%s|%d\n",
+        fprintf(arquivo_contas, "ID: %d|VALOR: %.2f| STATUS: %s| VALIDADE: %s| ID (Padagor):%d\n",
                 contas[i].idConta, contas[i].valor, contas[i].status,
                 contas[i].vencimento, contas[i].idpagador);
     }
@@ -173,38 +173,46 @@ void salvar_dados(Pagador *pagadores, int num_pagadores, Conta *contas, int num_
     printf("Dados salvos com sucesso!\n");
 }
 
-void carregar_dados(Pagador *pagadores, int *num_pagadores, Conta *contas, int *num_contas) {
+void carregar_dados(Pagador *pagadores, int *num_pagadores, int max_pagadores,
+                    Conta *contas, int *num_contas, int max_contas) {
+    // Abrir os arquivos
     FILE *arquivo_pagadores = fopen("pagadores.txt", "r");
     FILE *arquivo_contas = fopen("contas.txt", "r");
 
-    if (arquivo_pagadores != NULL) {
+    if (arquivo_pagadores == NULL) {
+        perror("Erro ao abrir arquivo de pagadores");
+    } else {
         *num_pagadores = 0;
-        while (fscanf(arquivo_pagadores, "%d|%49[^|]|%19[^|]|%14[^\n]\n",
+        while (*num_pagadores < max_pagadores &&
+               fscanf(arquivo_pagadores, "%d|%49[^|]|%19[^|]|%14[^\n]\n",
                       &pagadores[*num_pagadores].id,
                       pagadores[*num_pagadores].nome,
                       pagadores[*num_pagadores].cpfCnpj,
                       pagadores[*num_pagadores].telefone) == 4) {
             (*num_pagadores)++;
-        }
+                      }
         fclose(arquivo_pagadores);
-    } else {
-        printf("Aviso: Nenhum arquivo de pagadores encontrado.\n");
     }
 
-    if (arquivo_contas != NULL) {
+    if (arquivo_contas == NULL) {
+        perror("Erro ao abrir arquivo de contas");
+    } else {
         *num_contas = 0;
-        while (fscanf(arquivo_contas, "%d|%f|%19[^|]|%9[^|]|%d\n",
+        while (*num_contas < max_contas &&
+               fscanf(arquivo_contas, "%d|%f|%19[^|]|%9[^|]|%d\n",
                       &contas[*num_contas].idConta,
                       &contas[*num_contas].valor,
                       contas[*num_contas].status,
                       contas[*num_contas].vencimento,
                       &contas[*num_contas].idpagador) == 5) {
             (*num_contas)++;
-        }
+                      }
         fclose(arquivo_contas);
-    } else {
-        printf("Aviso: Nenhum arquivo de contas encontrado.\n");
     }
+
+    // Avisos para indicar o número de registros carregados
+    printf("Pagadores carregados: %d\n", *num_pagadores);
+    printf("Contas carregadas: %d\n", *num_contas);
 }
 
 // Função para listar todos os pagadores
@@ -288,7 +296,7 @@ int main() {
     int num_pagadores = 0;
 
     // Carregar dados dos arquivos ao iniciar
-    carregar_dados(pagadores, &num_pagadores, contas, &num_contas);
+    carregar_dados(pagadores, &num_pagadores, MAX_PAGADORES, contas, &num_contas, MAX_CONTAS);
     
     int opcao;
     do {
