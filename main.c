@@ -2,11 +2,11 @@
 Disciplina: Linguagem de Programação C
 
 Integrantes:
-- João Victor Martinho
+- João Victor De Andrade Martinho
 - Matheus Cavalheiro De Camargo 
 - Pedro Henrique Nunes Oliveira
-- Pedro Guaita Pereira
-- Rafael Ribeiro
+- Pedro Pereira Guaita
+- Rafael Ribeiro De Souza Medeiros
 
 Descrição do Problema:
 O objetivo deste programa é gerenciar informações de contas e pagadores para uma empresa.
